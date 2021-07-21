@@ -20,22 +20,30 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn icon>
-      <v-icon>mdi-magnify</v-icon>
-    </v-btn>
-
-    <v-btn icon>
-      <v-icon>mdi-heart</v-icon>
-    </v-btn>
-
-    <v-btn icon>
-      <v-icon>mdi-dots-vertical</v-icon>
-    </v-btn>
+    <div class="item-nav" @click="redirect('/agencias')">Agencias</div>
+    <div class="item-nav" @click="redirect('/reportepagosagencias')">
+      Reporte Pagos
+    </div>
+    <div class="item-nav" @click="redirect('/home')">Cerrar Sesion</div>
   </v-app-bar>
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    redirect(url) {
+      this.$router.push(url).catch(() => {});
+    },
+  },
+};
 </script>
 
-<style></style>
+<style scoped>
+.item-nav {
+  font-size: 20px;
+  margin-left: 20px;
+  padding-top: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+</style>

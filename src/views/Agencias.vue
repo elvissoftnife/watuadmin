@@ -1,11 +1,17 @@
 <template>
   <div>
-    Agencias
+    <TablaAgencias></TablaAgencias>
   </div>
 </template>
 
 <script>
-export default {};
+import TablaAgencias from "../modules/admin/agencias/TablaAgencias.vue";
+
+export default {
+  components: {
+    TablaAgencias,
+  },
+};
 </script>
 
 <style></style>
