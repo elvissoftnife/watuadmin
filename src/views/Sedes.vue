@@ -1,6 +1,5 @@
 <template>
   <div>
-<!--
         <v-row
           justify="center"
           class="mb-5"
@@ -28,7 +27,7 @@
           > 
             <v-text-field
                 class="d-none d-sm-flex"
-                v-model="form.nombre_sede"
+                v-model="form.distrito_sede"
                 label="Distrito de la sede"
                 placeholder="Buscar por distrito de la sede"
                 outlined
@@ -45,7 +44,8 @@
             >
               <v-btn
                 depressed
-                color="rgba(241, 151, 0, .075)"
+                color="#1976d2"
+                style="color: white !important"
                 class="secondary--text"
                 @click="clearFilter"
               >
@@ -54,13 +54,17 @@
           </v-col>
         </v-row>
      
-      <hr role="separator" aria-orientation="horizontal" class="v-divider theme--light mb-10">
--->
+      <hr role="separator" aria-orientation="horizontal" class="v-divider theme--light mb-7">
+
       <v-data-table
         :headers="headers"
         :items="sedes"
         sort-by="calories"
         class="elevation-1"
+        :footer-props="{
+          itemsPerPageText: 'Sedes por página:',
+          pageText: '{0}-{1} de {2}'  
+        }"
       >
         <template v-slot:top>
           <v-toolbar
@@ -79,7 +83,7 @@
                   Cambiar visibilidad de Sede
                 </v-card-title>
                 <v-card-text class="pt-5" style="font-size: 18px">
-                  Estas seguro que quieres desabilitar esta sede?
+                  Estas seguro que quieres cambiar la visibilidad de esta sede?
                 </v-card-text>
 
                 <v-divider></v-divider>
