@@ -2,15 +2,15 @@
   <v-data-table
     :headers="headers"
     :items="desserts"
-    sort-by="calories"
+    sort-by="nombre_agencia"
     class="elevation-1"
   >
     <template v-slot:item.image="{item}">
     <v-img
           :src="item.image"
           contain
-          height="50"
-          width="50"
+          height="150"
+          width="150"
         ></v-img>
           </template>
 
@@ -157,11 +157,10 @@ export default {
       {
         text: 'Nombre',
         align: 'start',
-        sortable: false,
         value: 'nombre_agencia',
       },
-      {text: 'Acronimo', value: 'acronimo_agencia'},
-      {text: 'Descripcion', value: 'descripcion'},
+      {text: 'Acronimo', value: 'acronimo_agencia', sortable:false},
+      {text: 'Descripcion', value: 'descripcion', sortable:false},
       {text: 'Estado', value: 'estado', sortable: false},
       {text: 'Actions', value: 'actions', sortable: false},
     ],

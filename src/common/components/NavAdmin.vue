@@ -1,22 +1,20 @@
 <template>
   <v-app-bar
-    absolute
+    fixed
     color="#fcb69f"
     dark
     shrink-on-scroll
     src="https://picsum.photos/1920/1080?random"
     scroll-target="#scrolling-techniques-2"
   >
-    <template v-slot:img="{ props }">
+    <template v-slot:img="{props}">
       <v-img
         v-bind="props"
         gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"
       ></v-img>
     </template>
 
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-    <v-app-bar-title>Title</v-app-bar-title>
+    <div class="logo">Watu Admin</div>
 
     <v-spacer></v-spacer>
 
@@ -45,5 +43,11 @@ export default {
   padding-top: 10px;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 </style>
