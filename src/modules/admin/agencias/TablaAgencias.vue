@@ -109,6 +109,16 @@
         </v-dialog>
       </v-toolbar>
     </template>
+
+    <template v-slot:item.estado="{item}">
+      <v-switch
+        @change="cambiarEstado(item)"
+        v-model="item.estado"
+        color="success"
+        hide-details
+      ></v-switch>
+    </template>
+
     <template v-slot:item.actions="{item}">
       <v-icon small class="mr-2" @click="editItem(item)">
         mdi-pencil
@@ -117,6 +127,7 @@
         mdi-delete
       </v-icon>
     </template>
+
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">
         Reset
@@ -141,6 +152,7 @@ export default {
       },
       {text: 'Acronimo', value: 'acronimo_agencia'},
       {text: 'Descripcion', value: 'descripcion'},
+      {text: 'Estado', value: 'estado', sortable: false},
       {text: 'Actions', value: 'actions', sortable: false},
     ],
     desserts: [],
@@ -228,6 +240,21 @@ export default {
       });
     },
 
+    cambiarEstado(item){
+      const valorNuevo = item.estado
+      console.log("-----------------------");
+      console.log(valorNuevo);
+      axios.put("https://api-watu.herokuapp.com/admin/agencia/"+item.id,{})
+      .then(resp=>{
+      console.log(resp)
+      })
+      .catch(error=>{
+        console.log("Errroooor")
+        item.estado=valorNuevo?0:1
+        console.log(error)
+      })
+    },
+
     imagenSeleccionada(e) {
       this.editedItem.image = e;
     },
@@ -260,7 +287,8 @@ export default {
         });
     },
 
-    editarrAgencia() {
+    editarAgencia() {
+      console.log(this.editedItem);
       Object.assign(this.desserts[this.editedIndex], this.editedItem);
       console.log('Actualizado');
     },
