@@ -5,6 +5,15 @@
     sort-by="calories"
     class="elevation-1"
   >
+    <template v-slot:item.image="{item}">
+    <v-img
+          :src="item.image"
+          contain
+          height="50"
+          width="50"
+        ></v-img>
+          </template>
+
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Agencias</v-toolbar-title>
@@ -25,49 +34,52 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="8" md="8">
                     <v-text-field
                       v-model="editedItem.nombre_agencia"
                       label="Nombre"
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="4" md="4">
                     <v-text-field
                       v-model="editedItem.acronimo_agencia"
                       label="Acronimo"
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.descripcion"
-                      label="Descripcion"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="editedItem.url"
                       label="Url"
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="4">
+
+
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
                       v-model="editedItem.email"
                       label="Email"
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
                       v-model="editedItem.password"
                       label="Password"
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
+                    <v-textarea
+                      solo
+                      v-model="editedItem.descripcion"
+                      label="Descripcion"
+                    ></v-textarea>
+                  </v-col>
+
+                  <v-col cols="12" sm="12" md="12">
                     <v-file-input
                       label="Imagen"
                       accept="image/*"
@@ -81,10 +93,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="close">
-                Cancel
+                Cancelar
               </v-btn>
               <v-btn color="blue darken-1" text @click="save">
-                Save
+                Guardar
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -123,9 +135,6 @@
       <v-icon small class="mr-2" @click="editItem(item)">
         mdi-pencil
       </v-icon>
-      <v-icon small @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
     </template>
 
     <template v-slot:no-data>
@@ -144,6 +153,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     headers: [
+      {text: 'Imagen', value: 'image', sortable:false},
       {
         text: 'Nombre',
         align: 'start',
