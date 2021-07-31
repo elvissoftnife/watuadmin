@@ -1,78 +1,47 @@
 <template slot="progress">
   <v-container style="width:100%">
-    <div
-      v-show="dialog"
-      style="width:100vw; height:100vh; background:rgba(158, 158, 158, 0.4); position:absolute; z-index:10; top:0; left:0; display:flex; flex-direction:row; justify-content:center; align-items: center;"
-    >
+    <div id="update-modal" v-show="dialog">
       <v-card style="width: 600px;">
         <v-card-title>
-          <span class="text-h5">User Profile</span>
+          <span class="text-h5">Editar programa</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field label="Legal first name*" required></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12">
                 <v-text-field
-                  label="Legal middle name"
-                  hint="example of helper text only on focus"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field
-                  label="Legal last name*"
-                  hint="example of persistent helper text"
-                  persistent-hint
+                  label="Nombre*"
+                  v-model="edit_program.nombre"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field label="Email*" required></v-text-field>
+                <p>Descripción*</p>
+                <v-textarea
+                  solo
+                  name="input-7-4"
+                  v-model="edit_program.descripcion"
+                ></v-textarea>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  label="Password*"
-                  type="password"
+                  label="Vacantes*"
+                  v-model="edit_program.vacantes"
+                  type="text"
                   required
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-select
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Age*"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-autocomplete
-                  :items="[
-                    'Skiing',
-                    'Ice hockey',
-                    'Soccer',
-                    'Basketball',
-                    'Hockey',
-                    'Reading',
-                    'Writing',
-                    'Coding',
-                    'Basejump',
-                  ]"
-                  label="Interests"
-                  multiple
-                ></v-autocomplete>
               </v-col>
             </v-row>
           </v-container>
-          <small>*indicates required field</small>
+          <small>*Indica campos requeridos</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialog = false">
             Cancelar
           </v-btn>
-          <v-btn color="blue darken-1" text @click="dialog = false">
-            Guardar
+          <v-btn color="blue darken-1" text @click="editProgram()">
+            Aceptar
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -106,11 +75,15 @@
 
           <v-divider class="mx-4"></v-divider>
           <v-card-actions>
-            <v-btn color="deep-purple lighten-2" text @click="dialog = !dialog">
+            <v-btn
+              color="deep-purple lighten-2"
+              text
+              @click="setProgram(program)"
+            >
               Editar
             </v-btn>
-            <v-btn color="deep-purple lighten-2" text>
-              Desactivar
+            <v-btn color="deep-purple lighten-2" text v-on:click="activateOrDesactivateProgram($event,program.id)">
+              {{ program.estado==1 ?  'ACTIVAR':'DESACTIVAR' }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -126,17 +99,56 @@ export default {
     return {
       programs: [],
       dialog: false,
+      edit_program: {}
     };
   },
   methods: {
-    editProgram: function(program_id) {
-      console.log(this.programs.find((program) => program.id == program_id));
+    editProgram: function() {
+      axios
+        .post(
+          `https://api-watu.herokuapp.com/programa/editar/${this.edit_program.id}`,
+          {
+            nombre: this.edit_program.nombre,
+            descripcion: this.edit_program.descripcion,
+            vacantes: this.edit_program.vacantes,
+          }
+        )
+        .then((response) => {
+          if (response.status == 200) {
+            this.programs.forEach((program) => {
+              if (program.id == this.edit_program.id) {
+                program.nombre = this.edit_program.nombre;
+                program.descripcion = this.edit_program.descripcion;
+                program.vacantes = this.edit_program.vacantes;
+              }
+            });
+          }
+        })
+        .catch();
     },
+    setProgram: function(program) {
+      this.edit_program.id = program.id;
+      this.edit_program.nombre = program.nombre;
+      this.edit_program.descripcion = program.descripcion;
+      this.edit_program.vacantes = program.vacantes;
+      this.dialog = !this.dialog;
+    },
+    activateOrDesactivateProgram:function(event,id){
+      console.log(event.target.innerText);
+      axios.put(`https://api-watu.herokuapp.com/admin/programa/${id}`);
+      let btn=event.target;
+      if(btn.innerText=='ACTIVAR'){
+        btn.innerText='DESACTIVAR';
+      }else{
+        btn.innerText='ACTIVAR';
+      }
+    }
   },
   beforeCreate: function() {
     axios
       .get("https://api-watu.herokuapp.com/admin/programas")
       .then((response) => {
+        //this.programs = response.data.programas.filter(programa=>programa.estado<2);
         this.programs = response.data.programas;
         console.log(this.programs);
       })
@@ -145,6 +157,19 @@ export default {
 };
 </script>
 <style>
+#update-modal {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(158, 158, 158, 0.4);
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
 .media {
   border-radius: 3%;
 }
