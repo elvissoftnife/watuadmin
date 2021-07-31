@@ -1,72 +1,52 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="desserts"
-    sort-by="nombre_agencia"
-    class="elevation-1"
-  >
-    <template v-slot:item.image="{item}">
-    <v-img
-          :src="item.image"
-          contain
-          height="150"
-          width="150"
-        ></v-img>
-          </template>
+  <div>
+    <div style="text-align:right">
+      <v-btn color="primary" class="mb-2" @click="dialogCrear = true">
+        Nueva agencia
+      </v-btn>
+    </div>
+    <v-dialog v-model="dialogCrear" max-width="1000px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Nueva Agencia</span>
+        </v-card-title>
 
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>Agencias</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{on, attrs}">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              Nueva agencia
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6" md="6">
                 <v-row>
                   <v-col cols="12" sm="8" md="8">
                     <v-text-field
-                      v-model="editedItem.nombre_agencia"
+                      v-model="crearItem.nombre_agencia"
                       label="Nombre"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="12" sm="4" md="4">
                     <v-text-field
-                      v-model="editedItem.acronimo_agencia"
+                      v-model="crearItem.acronimo_agencia"
                       label="Acronimo"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model="editedItem.url"
+                      v-model="crearItem.url"
                       label="Url"
                     ></v-text-field>
                   </v-col>
 
-
-
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field
-                      v-model="editedItem.email"
+                      v-model="crearItem.email"
                       label="Email"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field
-                      v-model="editedItem.password"
+                      v-model="crearItem.password"
                       label="Password"
                     ></v-text-field>
                   </v-col>
@@ -74,11 +54,14 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-textarea
                       solo
-                      v-model="editedItem.descripcion"
+                      v-model="crearItem.descripcion"
                       label="Descripcion"
                     ></v-textarea>
                   </v-col>
-
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="6">
+                <v-row>
                   <v-col cols="12" sm="12" md="12">
                     <v-file-input
                       label="Imagen"
@@ -86,121 +69,225 @@
                       @change="imagenSeleccionada"
                     ></v-file-input>
                   </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-skeleton-loader
+                      v-if="imagePreview === null"
+                      height="330"
+                      width="100%"
+                      type="image"
+                    ></v-skeleton-loader>
+
+                    <v-img
+                      v-if="imagePreview !== null"
+                      height="330"
+                      width="100%"
+                      :src="imagePreview"
+                    ></v-img>
+                  </v-col>
                 </v-row>
-              </v-container>
-            </v-card-text>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
-                Cancelar
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
-                Guardar
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="dialogCrear = false">
+            Cancelar
+          </v-btn>
+          <v-btn color="blue darken-1" text @click="crearNuevaAgencia">
+            Guardar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5"
-              >¿Seguro que quires eliminar?</v-card-title
-            >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancelar</v-btn
-              >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >Eliminar</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
+    <v-data-table
+      :headers="headers"
+      :items="desserts"
+      sort-by="nombre_agencia"
+      class="elevation-1"
+    >
+      <template v-slot:item.image="{ item }">
+        <v-img :src="item.image" contain height="150" width="150"></v-img>
+      </template>
 
-    <template v-slot:item.estado="{item}">
-      <v-switch
-        @change="cambiarEstado(item)"
-        v-model="item.estado"
-        color="success"
-        hide-details
-      ></v-switch>
-    </template>
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Agencias</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
 
-    <template v-slot:item.actions="{item}">
-      <v-icon small class="mr-2" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-    </template>
+          <v-dialog v-model="dialog" max-width="1000px">
+            <v-card>
+              <v-card-title>
+                <span class="text-h5">Editar Agencia</span>
+              </v-card-title>
 
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">
-        Reset
-      </v-btn>
-    </template>
-  </v-data-table>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-row>
+                        <v-col cols="12" sm="8" md="8">
+                          <v-text-field
+                            v-model="editedItem.nombre_agencia"
+                            label="Nombre"
+                          ></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" sm="4" md="4">
+                          <v-text-field
+                            v-model="editedItem.acronimo_agencia"
+                            label="Acronimo"
+                          ></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="editedItem.url"
+                            label="Url"
+                          ></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" sm="12" md="12">
+                          <v-textarea
+                            solo
+                            v-model="editedItem.descripcion"
+                            label="Descripcion"
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-file-input
+                            label="Imagen"
+                            accept="image/*"
+                            ref="inputFile"
+                            @change="imagenSeleccionadaEditar"
+                          ></v-file-input>
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-skeleton-loader
+                            v-if="imagePreviewEdit === null"
+                            height="250"
+                            width="100%"
+                            type="image"
+                          ></v-skeleton-loader>
+
+                          <v-img
+                            v-if="imagePreviewEdit !== null"
+                            height="250"
+                            width="100%"
+                            :src="imagePreviewEdit"
+                          ></v-img>
+                        </v-col>
+
+                        <v-col cols="12" sm="12" md="12">
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="dialog = false"
+                            >
+                              Cancelar
+                            </v-btn>
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="editarImagenAgencia"
+                            >
+                              Editar
+                            </v-btn>
+                          </v-card-actions>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+
+      <template v-slot:item.estado="{ item }">
+        <v-switch
+          @change="cambiarEstado(item)"
+          v-model="item.estado"
+          color="success"
+          hide-details
+        ></v-switch>
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+      </template>
+
+      <template v-slot:no-data>
+        <div>
+          Agencias cargando...
+        </div>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data: () => ({
     dialog: false,
-    dialogDelete: false,
+    dialogCrear: false,
+    imagePreview: null,
+    imagePreviewEdit: null,
     headers: [
-      {text: 'Imagen', value: 'image', sortable:false},
+      { text: "Imagen", value: "image", sortable: false },
       {
-        text: 'Nombre',
-        align: 'start',
-        value: 'nombre_agencia',
+        text: "Nombre",
+        align: "start",
+        value: "nombre_agencia",
       },
-      {text: 'Acronimo', value: 'acronimo_agencia', sortable:false},
-      {text: 'Descripcion', value: 'descripcion', sortable:false},
-      {text: 'Estado', value: 'estado', sortable: false},
-      {text: 'Actions', value: 'actions', sortable: false},
+      { text: "Acronimo", value: "acronimo_agencia", sortable: false },
+      { text: "Descripcion", value: "descripcion", sortable: false },
+      { text: "Estado", value: "estado", sortable: false },
+      { text: "Actions", value: "actions", sortable: false },
     ],
     desserts: [],
-    editedIndex: -1,
+    crearItem: {
+      nombre_agencia: "",
+      acronimo_agencia: "",
+      descripcion: "",
+      url: "",
+      email: "",
+      password: "",
+      image: "",
+    },
     editedItem: {
-      nombre_agencia: '',
-      acronimo_agencia: '',
-      descripcion: '',
-      url: '',
-      email: '',
-      password: '',
-      image: '',
+      nombre_agencia: "",
+      acronimo_agencia: "",
+      descripcion: "",
+      url: "",
+      email: "",
+      password: "",
+      image: "",
     },
     defaultItem: {
-      nombre_agencia: '',
-      acronimo_agencia: '',
-      descripcion: '',
-      url: '',
-      email: '',
-      password: '',
-      image: '',
+      nombre_agencia: "",
+      acronimo_agencia: "",
+      descripcion: "",
+      url: "",
+      email: "",
+      password: "",
+      image: "",
     },
   }),
-
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? 'Nueva Agencia' : 'Editar Agencia';
-    },
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
-  },
-
   created() {
     this.initialize();
   },
@@ -209,97 +296,105 @@ export default {
     initialize() {
       this.desserts = [];
       axios
-        .get('https://api-watu.herokuapp.com/admin/agencias')
-        .then(result => {
+        .get("https://api-watu.herokuapp.com/admin/agencias")
+        .then((result) => {
           console.log(result.data.agencias);
           this.desserts = result.data.agencias;
         });
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
-    deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-    },
-
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
-    },
-
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
-
-    closeDelete() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
-
-    cambiarEstado(item){
-      const valorNuevo = item.estado
+    cambiarEstado(item) {
+      const valorNuevo = item.estado;
       console.log("-----------------------");
       console.log(valorNuevo);
-      axios.put("https://api-watu.herokuapp.com/admin/agencia/"+item.id,{})
-      .then(resp=>{
-      console.log(resp)
-      })
-      .catch(error=>{
-        console.log("Errroooor")
-        item.estado=valorNuevo?0:1
-        console.log(error)
-      })
+      axios
+        .put("https://api-watu.herokuapp.com/admin/agencia/" + item.id, {})
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((error) => {
+          console.log("Errroooor");
+          item.estado = valorNuevo ? 0 : 1;
+          console.log(error);
+        });
     },
 
     imagenSeleccionada(e) {
-      this.editedItem.image = e;
+      this.crearItem.image = e;
+      this.imagePreview = e !== null ? URL.createObjectURL(e) : null;
     },
-    save() {
-      if (this.editedIndex > -1) {
-        this.editarAgencia();
-      } else {
-        this.crearNuevaAgencia();
-      }
-      this.close();
+
+    imagenSeleccionadaEditar(e) {
+      console.log(e);
+      this.editedItem.image = e;
+      this.imagePreviewEdit =
+        e !== null && e !== undefined ? URL.createObjectURL(e) : null;
     },
 
     crearNuevaAgencia() {
       let fd = new FormData();
-
-      fd.append('nombre_agencia', this.editedItem.nombre_agencia);
-      fd.append('acronimo_agencia', this.editedItem.acronimo_agencia);
-      fd.append('descripcion', this.editedItem.descripcion);
-      fd.append('url', this.editedItem.url);
-      fd.append('email', this.editedItem.email);
-      fd.append('password', this.editedItem.password);
-      fd.append('image', this.editedItem.image);
+      fd.append("nombre_agencia", this.crearItem.nombre_agencia);
+      fd.append("acronimo_agencia", this.crearItem.acronimo_agencia);
+      fd.append("descripcion", this.crearItem.descripcion);
+      fd.append("url", this.crearItem.url);
+      fd.append("email", this.crearItem.email);
+      fd.append("password", this.crearItem.password);
+      fd.append("image", this.crearItem.image);
 
       axios
-        .post('https://api-watu.herokuapp.com/admin/agencia/crear', fd)
-        .then(resp => {
+        .post("https://api-watu.herokuapp.com/admin/agencia/crear", fd)
+        .then((resp) => {
           console.log(resp);
-          this.desserts.push(this.editedItem);
-          console.log('Guardadoooo');
+          this.desserts.push(this.crearItem);
+          console.log("Guardadoooo");
+          this.dialogCrear = false;
         });
     },
 
-    editarAgencia() {
-      console.log(this.editedItem);
-      Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      console.log('Actualizado');
+    editarAgencia(imagen) {
+      axios
+        .post(
+          "https://api-watu.herokuapp.com/agencia/editar/" + this.editedItem.id,
+          {
+            nombre_agencia: this.editedItem.nombre_agencia,
+            acronimo_agencia: this.editedItem.acronimo_agencia,
+            descripcion: this.editedItem.descripcion,
+            url: this.editedItem.url,
+            image: imagen,
+          }
+        )
+        .then((resp) => {
+          console.log(resp);
+          this.imagePreviewEdit = null;
+          this.$refs.inputFile.reset();
+          this.dialog = false;
+          this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem);
+          });
+          this.initialize();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    editarImagenAgencia() {
+      if (this.imagePreviewEdit === null) {
+        this.editarAgencia(this.editedItem.image);
+      } else {
+        let fd = new FormData();
+        fd.append("image", this.editedItem.image);
+        axios
+          .post("https://api-watu.herokuapp.com/subirimage", fd)
+          .then((resp) => {
+            this.editarAgencia(resp.data.URL);
+          });
+      }
     },
   },
 };

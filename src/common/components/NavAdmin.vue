@@ -7,7 +7,7 @@
     src="https://picsum.photos/1920/1080?random"
     scroll-target="#scrolling-techniques-2"
   >
-    <template v-slot:img="{props}">
+    <template v-slot:img="{ props }">
       <v-img
         v-bind="props"
         gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"
@@ -19,8 +19,10 @@
     <v-spacer></v-spacer>
 
     <div class="item-nav" @click="redirect('/agencias')">Agencias</div>
-    <div class="item-nav" @click="redirect('/reportepagosagencias')">
-      Reporte Pagos
+    <div class="item-nav" @click="redirect('/sedes')">Sedes</div>
+    <div class="item-nav" @click="redirect('/programas')">Programas</div>
+    <div class="item-nav" @click="redirect('/usuarios')">
+      Usuarios
     </div>
     <div class="item-nav" @click="redirect('/home')">Cerrar Sesion</div>
   </v-app-bar>
