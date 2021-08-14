@@ -39,48 +39,6 @@
                     Iniciar Sesion
                   </v-btn>
                 </div>
-
-              <div class="container-login100-form-btn m-t-32">
-                  <span>¿Olvidaste tu contraseña? </span>
-                  <a @click.stop="dialog = true"> Click aqui</a>
-                  <v-dialog
-                    v-model="dialog"
-                    max-width="290"
-                    transition="dialog-bottom-transition"
-                  >
-                    <v-card>
-                      <v-card-title class="text-h5">
-                        Recuperar contraseña
-                      </v-card-title>
-
-                      <v-card-text>
-                        <v-container>
-                          <v-row>
-                            <v-col cols="12">
-                              <v-text-field
-                                v-model="form.email2"
-                                :rules="[rules.required('correo'), rules.email]"
-                                label="Correo electronico"
-                                type="email"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                      </v-card-text>
-
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-
-                      <v-btn color="primary" text @click="recoverPassword()">
-                        Enviar
-                      </v-btn>
-                      <v-btn color="secundary" text @click="close()">
-                        Cancelar
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-              </div>
             </v-row>
           </v-container>
         </v-form>
@@ -118,7 +76,6 @@ export default {
     form:{
       email: "",
       password: "",
-      email2: "",
     },
     showAlertError: false,
     loginLoading: false,
@@ -149,23 +106,6 @@ export default {
             this.loginLoading = false;
         });
       }
-    },
-    recoverPassword() {
-      this.dialog = false;
-      console.log("email2 => ", this.form.email2);
-      axios
-        .post(`https://api-watu.herokuapp.com/reset/password`, this.form.email2)
-        .then((result) => {
-          console.log(result);
-          this.showAlertError = false;
-        })
-        .catch(({ response }) => {
-          this.messageAlert = this.getMessageError(response);
-          this.showAlertError = true;
-        });
-    },
-    close(){
-      this.dialog = false;
     },
     closeAlert() {
       this.showAlertError = false;
