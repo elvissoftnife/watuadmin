@@ -1,11 +1,19 @@
 <template>
   <div>
-    Reporte de pagos de las agencias
+    <ReportePagoAgencia></ReportePagoAgencia>
   </div>
 </template>
 
 <script>
-export default {};
+
+import ReportePagoAgencia from "../modules/admin/reportePagoAgencia/ReportePagoAgencia.vue";
+
+export default {
+  components: {
+    ReportePagoAgencia,
+  },
+};
+
 </script>
 
 <style></style>
