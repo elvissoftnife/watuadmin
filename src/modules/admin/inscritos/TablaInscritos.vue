@@ -108,7 +108,7 @@ export default {
             id: inscription.id,
             estado: inscription.estado,
             fecha_reserva:  inscription.fecha_reserva.substring(0, 10),
-            usuario: inscription.usuario.nombre,
+            usuario: inscription.usuario.nombre + " " + inscription.usuario.apellido_paterno + " " + inscription.usuario.apellido_materno,
             programa: inscription.programa.nombre,
           });
         });
