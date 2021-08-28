@@ -10,19 +10,31 @@
       </template>
     </v-snackbar>
 
-    <v-data-table :headers="headers" :items="totalPagoAgencias" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="totalPagoAgencias"
+      class="elevation-1"
+    >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Reporte de Pago de Agencias</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
 
-
-
+          <v-btn
+            @click="imprimir()"
+            color="primary"
+            large
+            depressed
+            class="ml-sm-4"
+          >
+            Descargar Reporte
+          </v-btn>
         </v-toolbar>
       </template>
+
       <template v-slot:item.actions="{ item }">
-        <div style="display:flex">
+        <div style="display: flex">
           <v-icon small class="mr-2" @click="editItem(item)">
             mdi-pencil
           </v-icon>
@@ -35,9 +47,7 @@
         </div>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">
-          Reset
-        </v-btn>
+        <v-btn color="primary" @click="initialize"> Reset </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -52,6 +62,7 @@
 import axios from "axios";
 export default {
   data: () => ({
+    agencias: [],
     dialog: false,
     dialogDelete: false,
     snackbar: false,
@@ -99,19 +110,37 @@ export default {
 
   methods: {
     initialize() {
-      axios.get("https://api-watu.herokuapp.com/admin/agencias/pagos").then((result) => {
-        const inscriptionsResponse = result.data.listar_agencias;
-        inscriptionsResponse.map((pagoAgencia) => {
-          this.totalPagoAgencias.push({
-            nombre_agencia: pagoAgencia.nombre_agencia,
-            acronimo_agencia: pagoAgencia.acronimo_agencia,
-            fecha_inscripcion: pagoAgencia.fecha_inscripcion.substring(0, 10),
-            usuario: pagoAgencia.usuario,
+      axios
+        .get("https://api-watu.herokuapp.com/admin/agencias/pagos")
+        .then((result) => {
+          const inscriptionsResponse = result.data.listar_agencias;
+          this.agencias = result.data;
+          inscriptionsResponse.map((pagoAgencia) => {
+            this.totalPagoAgencias.push({
+              nombre_agencia: pagoAgencia.nombre_agencia,
+              acronimo_agencia: pagoAgencia.acronimo_agencia,
+              fecha_inscripcion: pagoAgencia.fecha_inscripcion.substring(0, 10),
+              usuario: pagoAgencia.usuario,
+            });
           });
         });
-      });
     },
 
+    imprimir() {
+      axios
+        .get("https://api-watu.herokuapp.com/report2", {
+          responseType: "arraybuffer",
+        })
+        .then((r) => {
+          console.log(r.data);
+          const url = window.URL.createObjectURL(new Blob([r.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "reportePagoAgencia.pdf");
+          document.body.appendChild(link);
+          link.click();
+        });
+    },
   },
 };
 </script>
