@@ -96,7 +96,7 @@ export default {
         .post(`https://api-watu.herokuapp.com/iniciar-sesion`, this.form)
         .then((response) => {
           console.log("response => ", response);
-          this.$router.push("/home");
+          this.$router.push("/agencias");
         })
         .catch(({ response }) => {
           this.messageAlert = this.getMessageError(response);

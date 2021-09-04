@@ -319,7 +319,7 @@ export default {
         val => (val || '').length > 0 || 'Ingrese la url.'
       ],
       email:[
-        val => (val || '').length > 0 || 'Ingresa un email.'
+        val => ((val || '').length > 0 && (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val))) || 'Ingresa un email.'
       ],
       password:[
         val => (val || '').length > 6 || 'Ingrese una constraseña valida.'
@@ -381,7 +381,7 @@ export default {
       let nombre_agencia = this.crearItem.nombre_agencia.length>0
       let acronimo_agencia = this.crearItem.acronimo_agencia.length>0
       let url = this.crearItem.url.length>0
-      let email = this.crearItem.email.length>0
+      let email = this.crearItem.email.length>0 && (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.crearItem.email))
       let password = this.crearItem.password.length>6
       let descripcion = this.crearItem.descripcion.length>0
       let imagen = this.crearItem.image!==null && this.crearItem.image.type!=undefined 

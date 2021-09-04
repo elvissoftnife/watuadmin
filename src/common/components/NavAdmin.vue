@@ -4,7 +4,7 @@
     color="#fcb69f"
     dark
     shrink-on-scroll
-    src="https://picsum.photos/1920/1080?random"
+    src="https://img.freepik.com/vector-gratis/fondo-tecnologia-red-hexagonal_79603-303.jpg?size=626&ext=jpg"
     scroll-target="#scrolling-techniques-2"
   >
     <template v-slot:img="{ props }">
