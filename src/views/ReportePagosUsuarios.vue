@@ -140,9 +140,8 @@ export default {
 
     imprimir() {
       axios
-        .get("https://api-watu.herokuapp.com/report", JSON.stringify({ user: this.usuarios }))
+        .post("https://api-watu.herokuapp.com/report", { usuarios: this.usuarios },{ responseType: "arraybuffer"})
         .then((r) => {
-          console.log("============>", r.data);
           const url = window.URL.createObjectURL(new Blob([r.data]));
           const link = document.createElement("a");
           link.href = url;
