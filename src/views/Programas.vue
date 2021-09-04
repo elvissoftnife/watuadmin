@@ -82,8 +82,12 @@
             >
               Editar
             </v-btn>
-            <v-btn color="deep-purple lighten-2" text v-on:click="activateOrDesactivateProgram($event,program.id)">
-              {{ program.estado==1 ?  'ACTIVAR':'DESACTIVAR' }}
+            <v-btn
+              color="deep-purple lighten-2"
+              text
+              v-on:click="activateOrDesactivateProgram($event, program.id)"
+            >
+              {{ program.estado == 1 ? "ACTIVAR" : "DESACTIVAR" }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -99,7 +103,7 @@ export default {
     return {
       programs: [],
       dialog: false,
-      edit_program: {}
+      edit_program: {},
     };
   },
   methods: {
@@ -133,16 +137,16 @@ export default {
       this.edit_program.vacantes = program.vacantes;
       this.dialog = !this.dialog;
     },
-    activateOrDesactivateProgram:function(event,id){
+    activateOrDesactivateProgram: function(event, id) {
       console.log(event.target.innerText);
       axios.put(`https://api-watu.herokuapp.com/admin/programa/${id}`);
-      let btn=event.target;
-      if(btn.innerText=='ACTIVAR'){
-        btn.innerText='DESACTIVAR';
-      }else{
-        btn.innerText='ACTIVAR';
+      let btn = event.target;
+      if (btn.innerText == "ACTIVAR") {
+        btn.innerText = "DESACTIVAR";
+      } else {
+        btn.innerText = "ACTIVAR";
       }
-    }
+    },
   },
   beforeCreate: function() {
     axios
@@ -161,7 +165,7 @@ export default {
   width: 100vw;
   height: 100vh;
   background: rgba(158, 158, 158, 0.4);
-  position: absolute;
+  position: fixed;
   z-index: 10;
   top: 0;
   left: 0;

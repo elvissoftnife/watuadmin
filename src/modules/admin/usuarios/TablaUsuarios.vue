@@ -98,13 +98,17 @@
         </v-toolbar>
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
+        <div style="display:flex">
+          <v-icon small class="mr-2" @click="editItem(item)">
+            mdi-pencil
+          </v-icon>
 
-        <v-icon small @click="updateItem(item)">
-          mdi-wrench
-        </v-icon>
+          <v-switch
+            v-model="item.switch"
+            flat
+            @click="updateItem(item)"
+          ></v-switch>
+        </div>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">
@@ -185,12 +189,14 @@ export default {
       axios.get("https://api-watu.herokuapp.com/admin/users").then((result) => {
         const usersResponse = result.data.lista_users;
         usersResponse.map((user) => {
+          console.log("USERR", user);
           this.totalUsuarios.push({
             id: user.id,
             name: user.nombre,
             namePat: user.apellido_paterno,
             nameMat: user.apellido_materno,
-            state: user.estado == 1 ? true : false,
+            state: user.estado == 1 ? "activado" : "desactivado",
+            switch: user.estado == 1 ? true : false,
           });
         });
       });
@@ -244,15 +250,22 @@ export default {
         .put(`https://api-watu.herokuapp.com/admin/users/` + id)
         .then((result) => {
           console.log(result);
-          const newUser = { ...user, state: !user.state };
+          console.log("user123", user);
+          const newUser = {
+            ...user,
+            state: user.switch ? "activado" : "desactivado",
+            switch: user.switch,
+          };
           //Obtener en que posiicon del arreglo esta el usuario actualizaod
           const indexUserList = this.totalUsuarios.findIndex(
             (arr) => arr.id == id
           );
           //Eliminar ese usuario
           this.totalUsuarios.splice(indexUserList, 1);
-          //Insertar el usuario editado
-          this.totalUsuarios.push(newUser);
+          //Insertar el usuario editado al inicio
+          this.totalUsuarios.unshift(newUser);
+
+          // this.totalUsuarios[indexUserList] = newUser;
 
           this.snackbarMessage = "Estado actualizado";
           this.snackbar = true;
@@ -285,8 +298,8 @@ export default {
         );
         //Eliminar ese usuario
         this.totalUsuarios.splice(indexUserList, 1);
-        //Insertar el usuario editado
-        this.totalUsuarios.push(this.editedItem);
+        //Insertar el usuario editado al inicio
+        this.totalUsuarios.unshift(this.editedItem);
       } else {
         //Crear usuario
       }

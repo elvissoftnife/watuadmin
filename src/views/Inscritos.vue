@@ -1,11 +1,17 @@
 <template>
   <div>
-    Inscritos
+    <TablaInscritos></TablaInscritos>
   </div>
 </template>
 
 <script>
-export default {};
+import TablaInscritos from "../modules/admin/inscritos/TablaInscritos.vue";
+
+export default {
+  components: {
+    TablaInscritos,
+  },
+};
 </script>
 
 <style></style>
