@@ -20,6 +20,7 @@
                     <v-text-field
                       v-model="crearItem.nombre_agencia"
                       label="Nombre"
+                      :rules="rules.nombre"
                     ></v-text-field>
                   </v-col>
 
@@ -27,6 +28,7 @@
                     <v-text-field
                       v-model="crearItem.acronimo_agencia"
                       label="Acronimo"
+                      :rules="rules.acronimo"
                     ></v-text-field>
                   </v-col>
 
@@ -34,6 +36,7 @@
                     <v-text-field
                       v-model="crearItem.url"
                       label="Url"
+                      :rules="rules.url"
                     ></v-text-field>
                   </v-col>
 
@@ -41,6 +44,7 @@
                     <v-text-field
                       v-model="crearItem.email"
                       label="Email"
+                      :rules="rules.email"
                     ></v-text-field>
                   </v-col>
 
@@ -48,6 +52,7 @@
                     <v-text-field
                       v-model="crearItem.password"
                       label="Password"
+                      :rules="rules.password"
                     ></v-text-field>
                   </v-col>
 
@@ -56,6 +61,7 @@
                       solo
                       v-model="crearItem.descripcion"
                       label="Descripcion"
+                      :rules="rules.descripcion"
                     ></v-textarea>
                   </v-col>
                 </v-row>
@@ -133,6 +139,7 @@
                           <v-text-field
                             v-model="editedItem.nombre_agencia"
                             label="Nombre"
+                            :rules="rules.nombre"
                           ></v-text-field>
                         </v-col>
 
@@ -140,6 +147,7 @@
                           <v-text-field
                             v-model="editedItem.acronimo_agencia"
                             label="Acronimo"
+                            :rules="rules.acronimo"
                           ></v-text-field>
                         </v-col>
 
@@ -147,6 +155,7 @@
                           <v-text-field
                             v-model="editedItem.url"
                             label="Url"
+                            :rules="rules.url"
                           ></v-text-field>
                         </v-col>
 
@@ -155,6 +164,7 @@
                             solo
                             v-model="editedItem.descripcion"
                             label="Descripcion"
+                            :rules="rules.descripcion"
                           ></v-textarea>
                         </v-col>
                       </v-row>
@@ -235,6 +245,16 @@
         </div>
       </template>
     </v-data-table>
+
+    <v-snackbar v-model="snackbar">
+      {{ "Complete el formulario de forma correcta." }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -287,6 +307,27 @@ export default {
       password: "",
       image: "",
     },
+    snackbar:false,
+    rules:{
+      nombre:[
+        val => (val || '').length > 0 || 'Ingrese un nombre.'
+      ],
+      acronimo:[
+        val => (val || '').length > 0 || 'Ingrese un acronimo.'
+      ],
+      url:[
+        val => (val || '').length > 0 || 'Ingrese la url.'
+      ],
+      email:[
+        val => (val || '').length > 0 || 'Ingresa un email.'
+      ],
+      password:[
+        val => (val || '').length > 6 || 'Ingrese una constraseña valida.'
+      ],
+      descripcion:[
+        val => (val || '').length > 0 || 'Ingrese una descripcion.'
+      ]
+    }
   }),
   created() {
     this.initialize();
@@ -337,6 +378,19 @@ export default {
     },
 
     crearNuevaAgencia() {
+      let nombre_agencia = this.crearItem.nombre_agencia.length>0
+      let acronimo_agencia = this.crearItem.acronimo_agencia.length>0
+      let url = this.crearItem.url.length>0
+      let email = this.crearItem.email.length>0
+      let password = this.crearItem.password.length>6
+      let descripcion = this.crearItem.descripcion.length>0
+      let imagen = this.crearItem.image!==null && this.crearItem.image.type!=undefined 
+
+      if(!nombre_agencia || !acronimo_agencia || !url || !email || !password || !descripcion || !imagen){
+        this.snackbar=true
+        return;
+      }
+
       let fd = new FormData();
       fd.append("nombre_agencia", this.crearItem.nombre_agencia);
       fd.append("acronimo_agencia", this.crearItem.acronimo_agencia);
@@ -345,6 +399,7 @@ export default {
       fd.append("email", this.crearItem.email);
       fd.append("password", this.crearItem.password);
       fd.append("image", this.crearItem.image);
+
 
       axios
         .post("https://api-watu.herokuapp.com/admin/agencia/crear", fd)
@@ -357,6 +412,17 @@ export default {
     },
 
     editarAgencia(imagen) {
+
+      let nombre_agencia = this.editedItem.nombre_agencia.length>0
+      let acronimo_agencia = this.editedItem.acronimo_agencia.length>0
+      let url = this.editedItem.url.length>0
+      let descripcion = this.editedItem.descripcion.length>0
+
+      if(!nombre_agencia || !acronimo_agencia || !url || !descripcion){
+        this.snackbar=true
+        return;
+      }
+
       axios
         .post(
           "https://api-watu.herokuapp.com/agencia/editar/" + this.editedItem.id,

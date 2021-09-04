@@ -27,8 +27,13 @@
     <div class="item-nav" @click="redirect('/inscritos')">
       Inscritos
     </div>
-    <div class="item-nav" @click="redirect('/home')">Cerrar Sesion</div>
-    <div class="item-nav" @click="redirect('/')">Cerrar Sesion</div>
+    <div class="item-nav" @click="redirect('/reportepagosagencias')">
+      Reporte.A
+    </div>
+    <div class="item-nav" @click="redirect('/reportepagosusuarios')">
+      Reporte.U
+    </div>
+    <div class="item-nav" @click="redirect('/')">Salir</div>
   </v-app-bar>
 </template>
 
