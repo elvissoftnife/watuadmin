@@ -128,7 +128,7 @@ export default {
 
     imprimir() {
       axios
-        .get("https://api-watu.herokuapp.com/report2", {
+        .post("https://api-watu.herokuapp.com/report2", this.agencias, {
           responseType: "arraybuffer",
         })
         .then((r) => {
